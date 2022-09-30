@@ -6,9 +6,8 @@ export const registration = async (req, res) => {
     try {
         const {email, password} = req.body
         const candidate = await UserModel.findOne({email})
-        if (candidate) {
-            return res.status(400).json({message: "Пользователь с таким именем или почтой уже существует"})
-        }
+        if (candidate) res.status(400).json({message: "Пользователь с такой почтой уже существует"})
+
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
         const doc = new UserModel({
@@ -32,8 +31,17 @@ export const registration = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-
+        const {email, password} = req.body
+        const user = await UserModel.findOne({email})
+        if (!user) res.status(400).json({message: "Пользователя с такой  почтой не существует"})
+        const isValidPass = await bcrypt.compare(password, user._doc.password)
+        if (!isValidPass) res.status(400).json({message: 'Неверный логин или пароль'})
+        const token = jwt.sign({
+            _id: user._id
+        }, process.env.JWT_ACCESS_SECRET, {expiresIn: '30d'})
+        res.json({user, token})
     } catch (e) {
-
+        console.log(e)
+        res.status(500).json({message: 'Не удалось авторизоваться'})
     }
 }
