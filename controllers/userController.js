@@ -5,22 +5,22 @@ import {userDto} from "../utils/userDto.js";
 
 export const registration = async (req, res) => {
     try {
-        const {email, password} = req.body
+        const {email} = req.body
         const candidate = await UserModel.findOne({email})
         if (candidate) res.status(400).json({message: "Пользователь с такой почтой уже существует"})
         const salt = await bcrypt.genSalt(10)
-        const hash = await bcrypt.hash(password, salt)
+        const password = await bcrypt.hash(req.body.password, salt)
         const doc = new UserModel({
             email,
-            password: hash,
+            password,
         })
         const user = await doc.save()
         const token = jwt.sign({
             _id: user._id
         }, process.env.JWT_ACCESS_SECRET, {expiresIn: '30d'})
 
-        const data = userDto(user._doc,token)
-        res.json({message:'success',data})
+        const data = userDto(user._doc, token)
+        res.json({message: 'success', data})
     } catch (e) {
         console.log(e);
         res.status(500).json({
@@ -39,8 +39,8 @@ export const login = async (req, res) => {
         const token = jwt.sign({
             _id: user._id
         }, process.env.JWT_ACCESS_SECRET, {expiresIn: '30d'})
-        const data = userDto(user._doc,token)
-        res.json({message:'success',data})
+        const data = userDto(user._doc, token)
+        res.json({message: 'success', data})
     } catch (e) {
         console.log(e)
         res.status(500).json({message: 'Не удалось авторизоваться'})
