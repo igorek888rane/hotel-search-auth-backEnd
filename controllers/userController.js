@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {userDto} from "../utils/userDto.js";
 
+
 export const registration = async (req, res) => {
     try {
         const {email} = req.body
@@ -42,7 +43,24 @@ export const login = async (req, res) => {
         const data = userDto(user._doc, token)
         res.json({message: 'success', data})
     } catch (e) {
-        console.log(e)
         res.status(500).json({message: 'Не удалось авторизоваться'})
+    }
+}
+export const getMe = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId)
+        res.json({message: 'success', data: user})
+    } catch (e) {
+        res.status(500).json({message: 'Ошибка'})
+    }
+}
+
+
+export const getUsers = async (req, res) => {
+    try {
+        const users = await UserModel.find()
+        res.json(users)
+    } catch (e) {
+        res.status(500).json({message: 'Не удалось получить юзеров'})
     }
 }
