@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 import express from 'express';
 import cors from 'cors';
 import mongoose from "mongoose";
-import {routerAuth} from "./routers/index.js";
+import {routerAuth, routerHotels} from "./routers/index.js";
 
 dotenv.config()
 
@@ -16,9 +16,7 @@ const app = express();
 app.use(express.json())
 app.use(cors())
 app.use('/auth', routerAuth)
-
-
-
+app.use('/hotel', routerHotels)
 
 
 async function startApp() {
