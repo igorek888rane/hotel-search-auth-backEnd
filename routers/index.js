@@ -13,6 +13,6 @@ routerAuth.get('/users', getUsers)
 
 export const routerHotels = new Router()
 
-routerHotels.post('/addHotel', checkAuth, addHotel)
-routerHotels.delete('/addHotel', checkAuth, deleteHotel)
-routerHotels.get('/addHotel', checkAuth, getHotels)
+routerHotels.post('/addFavorite', checkAuth, addHotel)
+routerHotels.delete('/deleteFavorite/:id', checkAuth, deleteHotel)
+routerHotels.get('/getFavorite', checkAuth, getHotels)

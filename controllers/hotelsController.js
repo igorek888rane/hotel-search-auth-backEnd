@@ -1,5 +1,4 @@
 import HotelModel from "../models/hotel.js";
-import UserModel from "../models/user.js";
 
 export const addHotel = async (req, res) => {
     try {
@@ -8,13 +7,8 @@ export const addHotel = async (req, res) => {
             ...req.body,
         })
         const hotel = await doc.save()
-        await UserModel.findByIdAndUpdate({_id: req.userId}, {
-            $push: {favoritesHotels: hotel}
-        })
-        res.json({
-            message: 'success',
-            hotel
-        })
+
+        res.json(hotel)
     } catch (e) {
         console.log(e);
         res.status(500).json({
@@ -26,26 +20,19 @@ export const addHotel = async (req, res) => {
 
 export const deleteHotel = async (req, res) => {
     try {
-        const hotel = await HotelModel.findByIdAndDelete(req.params.id)
-        await UserModel.findByIdAndUpdate({_id: req.userId}, {
-            $pull: {favoritesHotels: hotel}
-        })
-        res.json({
-            message: 'success',
-            hotel
-        })
+        const hotelId = req.params.id
+        const hotel = await HotelModel.findOneAndDelete(hotelId)
+        res.json(hotel)
     } catch (e) {
+        console.log(e);
         res.status(500).json({message: 'Не удалось удалить'})
     }
 }
 
 export const getHotels = async (req, res) => {
     try {
-        const hotel = await HotelModel.find({userId: req.userId})
-        res.json({
-            message: 'success',
-            hotel
-        })
+        const hotels = await HotelModel.find({userId: req.userId})
+        res.json(hotels)
     } catch (e) {
         res.status(500).json({message: 'Не удалось удалить'})
     }

@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json())
 app.use(cors())
 app.use('/auth', routerAuth)
-app.use('/hotel', routerHotels)
+app.use('/favorite', routerHotels)
 
 
 async function startApp() {
